@@ -10,9 +10,6 @@ Future<void> main() async {
   await Store.init();
   runApp(const PackTrailApp());
 }
-
-// ---------- Colors (pink & violet palette) ----------
-
 const kViolet = Color(0xFF8B5CF6);
 const kHotPink = Color(0xFFE75C97);
 const kLightViolet = Color(0xFFEDE3FF);
@@ -31,14 +28,11 @@ const kHeaderGradient = LinearGradient(
 const kEssentialsCat = 'Essentials';
 const kAllCat = 'All';
 
-// Fonts from the HTML: Plus Jakarta Sans for headings, Inter for body text
 TextStyle headStyle(double size, {Color color = kCocoa, FontWeight weight = FontWeight.w800}) =>
     GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color);
 
 TextStyle bodyStyle(double size, {Color color = kCocoa, FontWeight weight = FontWeight.w500}) =>
     GoogleFonts.inter(fontSize: size, fontWeight: weight, color: color);
-
-// ---------- Data ----------
 
 class PackItem {
   String name;
@@ -125,7 +119,6 @@ class PackTrip {
       );
 }
 
-// Items that every trip starts with
 const essentialLines = [
   'Valid ID',
   'Phone + charger',
@@ -136,7 +129,6 @@ const essentialLines = [
   'Extra clothes',
 ];
 
-// Lines starting with # are category headers, the rest are items
 List<PackItem> itemsFromLines(List<String> lines) {
   final result = <PackItem>[];
   var category = 'General';
@@ -432,14 +424,9 @@ List<PackTemplate> defaultTemplates() => [
           'Motion sickness pills',
           'Tissue',
           'Hand sanitizer',
-          '#Miscellaneous',
-          'Gifts for relatives',
-          'Cash for fare and pasalubong',
         ]),
       ),
     ];
-
-// ---------- Storage (saved on the device) ----------
 
 class Store {
   static late SharedPreferences _prefs;
@@ -481,8 +468,6 @@ class Store {
     _prefs.setString(_tripKey, jsonEncode(trip.toJson()));
   }
 }
-
-// ---------- Shared widgets and decorations ----------
 
 Widget softCard({required Widget child, EdgeInsetsGeometry padding = const EdgeInsets.all(16)}) {
   return Container(
@@ -531,7 +516,6 @@ Widget fieldLabel(String text) => Padding(
       child: Text(text, style: bodyStyle(12, weight: FontWeight.w700)),
     );
 
-// Violet-to-pink gradient background with stripes and hearts
 class GinghamPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -582,7 +566,6 @@ class GinghamPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// Pink butterfly
 class ButterflyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -619,7 +602,6 @@ class ButterflyWidget extends StatelessWidget {
   }
 }
 
-// Emoji that gently bounces and tilts forever
 class BouncingEmoji extends StatefulWidget {
   final String emoji;
   final double size;
@@ -657,8 +639,6 @@ class _BouncingEmojiState extends State<BouncingEmoji> with SingleTickerProvider
   }
 }
 
-// ---------- App ----------
-
 class PackTrailApp extends StatelessWidget {
   const PackTrailApp({super.key});
 
@@ -681,8 +661,6 @@ class PackTrailApp extends StatelessWidget {
     );
   }
 }
-
-// ---------- Home: Active Trip and Templates ----------
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -773,7 +751,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Header with logo, name, and the Active Trip / Templates switcher
   Widget _header() {
     return Container(
       decoration: const BoxDecoration(
@@ -856,8 +833,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // ---------- Active Trip view ----------
 
   Widget _activeView() {
     final trip = Store.trip;
@@ -1234,8 +1209,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ---------- Trip actions ----------
-
   Future<void> _renameTrip() async {
     final ctrl = TextEditingController(text: Store.trip.name);
     final result = await showDialog<String>(
@@ -1348,8 +1321,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _changed();
     _toast('Checklist reset. Ready for your next trip!');
   }
-
-  // ---------- Templates view ----------
 
   Widget _templatesView() {
     return Column(
@@ -1495,8 +1466,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _toast('Template deleted');
   }
 }
-
-// ---------- Create or edit a template ----------
 
 class TemplateEditorPage extends StatefulWidget {
   final PackTemplate template;
