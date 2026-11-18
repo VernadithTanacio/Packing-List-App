@@ -28,10 +28,6 @@ const kHeaderGradient = LinearGradient(
 const kEssentialsCat = 'Essentials';
 const kAllCat = 'All';
 
-const kLimitGrams = 15000; // limit ng bag, baguhin kung kailangan
-
-String fmtWeight(int g) => g >= 1000 ? '${(g / 1000).toStringAsFixed(1)} kg' : '$g g';
-
 TextStyle headStyle(double size, {Color color = kCocoa, FontWeight weight = FontWeight.w800}) =>
     GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color);
 
@@ -43,24 +39,16 @@ class PackItem {
   String category;
   bool essential;
   bool packed;
-  int grams;
 
-  PackItem({
-    required this.name,
-    required this.category,
-    this.essential = false,
-    this.packed = false,
-    this.grams = 0,
-  });
+  PackItem({required this.name, required this.category, this.essential = false, this.packed = false});
 
-  PackItem copy() => PackItem(name: name, category: category, essential: essential, grams: grams);
+  PackItem copy() => PackItem(name: name, category: category, essential: essential);
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'category': category,
         'essential': essential,
         'packed': packed,
-        'grams': grams,
       };
 
   factory PackItem.fromJson(Map<String, dynamic> j) => PackItem(
@@ -68,7 +56,6 @@ class PackItem {
         category: j['category'] as String,
         essential: (j['essential'] as bool?) ?? false,
         packed: (j['packed'] as bool?) ?? false,
-        grams: (j['grams'] as int?) ?? 0,
       );
 }
 
@@ -149,12 +136,7 @@ List<PackItem> itemsFromLines(List<String> lines) {
     if (line.startsWith('#')) {
       category = line.substring(1);
     } else {
-      final parts = line.split('|');
-      result.add(PackItem(
-        name: parts[0].trim(),
-        category: category,
-        grams: parts.length > 1 ? (int.tryParse(parts[1].trim()) ?? 0) : 0,
-      ));
+      result.add(PackItem(name: line, category: category));
     }
   }
   return result;
@@ -694,13 +676,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String _quickCategory = 'General';
   bool _quickEssential = false;
   final _quickName = TextEditingController();
-  final _quickGrams = TextEditingController();
   final _search = TextEditingController();
 
   @override
   void dispose() {
     _quickName.dispose();
-    _quickGrams.dispose();
     _search.dispose();
     super.dispose();
   }
@@ -942,8 +922,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final packed = trip.items.where((i) => i.packed).length;
     final pct = total == 0 ? 0 : (packed * 100 / total).round();
     final essRemaining = trip.items.where((i) => i.essential && !i.packed).length;
-    final totalG = trip.items.fold<int>(0, (s, i) => s + i.grams);
-    final packedG = trip.items.where((i) => i.packed).fold<int>(0, (s, i) => s + i.grams);
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -958,7 +936,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text('Packing Progress', style: bodyStyle(13, weight: FontWeight.w700)),
               const Spacer(),
               Text(
-                '$packed / $total items ($pct%)',
+                '$packed / $total packed ($pct%)',
                 style: bodyStyle(13, weight: FontWeight.w800),
               ),
             ],
@@ -972,34 +950,6 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: Colors.white,
               color: kHotPink,
             ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(Icons.luggage, size: 16, color: kViolet),
-              const SizedBox(width: 6),
-              Text('Timbang ng bag', style: bodyStyle(13, weight: FontWeight.w700)),
-              const Spacer(),
-              Text(
-                '${fmtWeight(packedG)} / ${fmtWeight(kLimitGrams)}',
-                style: bodyStyle(13, weight: FontWeight.w800),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: (packedG / kLimitGrams).clamp(0.0, 1.0).toDouble(),
-              minHeight: 10,
-              backgroundColor: Colors.white,
-              color: packedG > kLimitGrams ? Colors.red : kViolet,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Kabuuang gamit sa listahan: ${fmtWeight(totalG)}',
-            style: bodyStyle(11, color: Colors.grey),
           ),
           const SizedBox(height: 4),
           Row(
@@ -1042,17 +992,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: inputDecoration('Add gear or item (e.g., Headlamp)...', icon: Icons.add),
             ),
           ),
-          const SizedBox(width: 6),
-          SizedBox(
-            width: 64,
-            child: TextField(
-              controller: _quickGrams,
-              keyboardType: TextInputType.number,
-              style: bodyStyle(13),
-              decoration: inputDecoration('g'),
-            ),
-          ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
           DropdownButton<String>(
             value: selected,
             underline: const SizedBox.shrink(),
@@ -1083,14 +1023,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _quickAdd(PackTrip trip) {
     final name = _quickName.text.trim();
     if (name.isEmpty) return;
-    trip.items.add(PackItem(
-      name: name,
-      category: _quickCategory,
-      essential: _quickEssential,
-      grams: int.tryParse(_quickGrams.text.trim()) ?? 0,
-    ));
+    trip.items.add(PackItem(name: name, category: _quickCategory, essential: _quickEssential));
     _quickName.clear();
-    _quickGrams.clear();
     _quickEssential = false;
     _changed();
   }
@@ -1250,11 +1184,6 @@ class _HomeScreenState extends State<HomeScreen> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              fmtWeight(item.grams),
-              style: bodyStyle(12, color: kViolet, weight: FontWeight.w700),
-            ),
-            const SizedBox(width: 4),
             IconButton(
               tooltip: 'Essential',
               icon: Icon(
@@ -1326,8 +1255,7 @@ class _HomeScreenState extends State<HomeScreen> {
       for (final i in trip.items.where((i) => i.category == cat)) {
         final check = i.packed ? '[x]' : '[ ]';
         final star = i.essential ? ' ★' : '';
-        final weight = i.grams > 0 ? ' (${fmtWeight(i.grams)})' : '';
-        lines.add('$check ${i.name}$weight$star');
+        lines.add('$check ${i.name}$star');
       }
     }
     return lines.join('\n');
@@ -1553,7 +1481,6 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
   late final TextEditingController _desc;
   late final TextEditingController _newItem;
   late final TextEditingController _newCat;
-  late final TextEditingController _newGrams;
   late List<PackItem> _items;
 
   @override
@@ -1563,7 +1490,6 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
     _desc = TextEditingController(text: widget.template.description);
     _newItem = TextEditingController();
     _newCat = TextEditingController(text: 'General');
-    _newGrams = TextEditingController();
     _items = widget.template.items.map((i) => i.copy()).toList();
   }
 
@@ -1573,7 +1499,6 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
     _desc.dispose();
     _newItem.dispose();
     _newCat.dispose();
-    _newGrams.dispose();
     super.dispose();
   }
 
@@ -1581,10 +1506,8 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
     final text = _newItem.text.trim();
     if (text.isEmpty) return;
     final cat = _newCat.text.trim().isEmpty ? 'General' : _newCat.text.trim();
-    final grams = int.tryParse(_newGrams.text.trim()) ?? 0;
-    setState(() => _items.add(PackItem(name: text, category: cat, grams: grams)));
+    setState(() => _items.add(PackItem(name: text, category: cat)));
     _newItem.clear();
-    _newGrams.clear();
   }
 
   void _save() {
@@ -1658,17 +1581,7 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                               ),
                               const SizedBox(width: 8),
                               SizedBox(
-                                width: 80,
-                                child: TextField(
-                                  controller: _newGrams,
-                                  keyboardType: TextInputType.number,
-                                  style: bodyStyle(13),
-                                  decoration: inputDecoration('Gramo'),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                width: 120,
+                                width: 140,
                                 child: TextField(
                                   controller: _newCat,
                                   style: bodyStyle(13),
@@ -1691,10 +1604,7 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                               dense: true,
                               contentPadding: EdgeInsets.zero,
                               title: Text(e.value.name, style: bodyStyle(13)),
-                              subtitle: Text(
-                                '${e.value.category} • ${fmtWeight(e.value.grams)}',
-                                style: bodyStyle(11, color: Colors.grey),
-                              ),
+                              subtitle: Text(e.value.category, style: bodyStyle(11, color: Colors.grey)),
                               trailing: IconButton(
                                 icon: const Icon(Icons.close, color: kHotPink),
                                 onPressed: () => setState(() => _items.removeAt(e.key)),
