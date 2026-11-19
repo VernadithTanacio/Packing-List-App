@@ -1,5 +1,5 @@
-# PackTrail
-A packing list app for creating and checking off trip checklists, organized by category.
+# Packing List App
+A packing list app for creating and checking off trip checklists, and organized by category.
 
 ## Features
 - **Active Trip checklist** with a progress bar and "Packing Progress" summary
