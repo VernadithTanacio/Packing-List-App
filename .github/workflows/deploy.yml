@@ -18,7 +18,7 @@ jobs:
         with:
           channel: stable
       - run: flutter pub get
-      - run: flutter build web --base-href /packing-app/
+      - run: flutter build web --release --base-href /Packing-List-App/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web

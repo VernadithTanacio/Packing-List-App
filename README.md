@@ -12,7 +12,7 @@ A packing list app for creating and checking off trip checklists, and organized 
 - **Export** the list with check marks, and **Copy** it to the clipboard
 - **Save as Template** to reuse the list on future trips
 - **Reset** to uncheck all items for a new trip
-- **Built-in templates**: Beach / Island, Hiking / Mountain, City Trip, Camping, Road Trip, Weekend Getaway, Business  Trip, Rainy Season Trip, Cold Weather, and Overnight Provincial Trip
+- **Built-in templates**: Beach / Island, Hiking / Mountain, City Trip, Camping, Road Trip, Business  Trip, Rainy Season Trip, Cold Weather, and Overnight Provincial Trip
 - **Use template** to load a list into the Active Trip
 - **Create and edit custom templates** (New Custom Template)
 - **Works offline**: data is saved on the device with SharedPreferences, so it stays after the app is closed
