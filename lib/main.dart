@@ -754,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('PackingListApp', style: headStyle(20, color: Colors.white)),
+                    Text('PACKING LIST APP', style: headStyle(20, color: Colors.white)),
                     Text(
                       'BACKPACKER GEAR & LISTS',
                       style: bodyStyle(10, color: Colors.white70, weight: FontWeight.w700),
