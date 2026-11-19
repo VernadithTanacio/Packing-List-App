@@ -3,6 +3,7 @@ A packing list app for creating and checking off trip checklists, and organized 
 
 ## Features
 - **Active Trip checklist** with a progress bar and "Packing Progress" summary
+- **Reusable Trip Template** to pick template per trip type
 - **Hide / Show packed** to hide or show items that are already packed
 - **Category filter** (All and each category) and **search** ("Filter items")
 - **Quick add** items with a category and an essential star
