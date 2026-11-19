@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Store.init();
-  runApp(const PackTrailApp());
+  runApp(const PackingListApp());
 }
 const kViolet = Color(0xFF8B5CF6);
 const kHotPink = Color(0xFFE75C97);
@@ -313,28 +313,6 @@ List<PackTemplate> defaultTemplates() => [
         ]),
       ),
       PackTemplate(
-        id: 'tpl-weekend',
-        name: 'Weekend Getaway',
-        emoji: '🧳',
-        description: 'A quick overnight bag with only the essentials.',
-        builtIn: true,
-        items: itemsFromLines([
-          '#Clothing',
-          'Light jacket',
-          'Swimwear',
-          'Sleepwear',
-          '#Footwear',
-          'Extra shoes',
-          '#Gear',
-          'Camera',
-          'Toiletry bag',
-          'Reusable bottle',
-          '#Health and Safety',
-          'Personal medicines',
-          'Sunscreen',
-        ]),
-      ),
-      PackTemplate(
         id: 'tpl-business',
         name: 'Business Trip',
         emoji: '💼',
@@ -433,8 +411,8 @@ class Store {
   static final List<PackTemplate> templates = [];
   static late PackTrip trip;
 
-  static const _templatesKey = 'packtrail_templates';
-  static const _tripKey = 'packtrail_trip';
+  static const _templatesKey = 'PackingListApp templates';
+  static const _tripKey = 'PackingListApp trip';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -639,13 +617,13 @@ class _BouncingEmojiState extends State<BouncingEmoji> with SingleTickerProvider
   }
 }
 
-class PackTrailApp extends StatelessWidget {
-  const PackTrailApp({super.key});
+class PackingListApp extends StatelessWidget {
+  const PackingListApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PackTrail',
+      title: 'Packing-List App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -776,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('PackTrail', style: headStyle(20, color: Colors.white)),
+                    Text('PackingListApp', style: headStyle(20, color: Colors.white)),
                     Text(
                       'BACKPACKER GEAR & LISTS',
                       style: bodyStyle(10, color: Colors.white70, weight: FontWeight.w700),
@@ -1246,7 +1224,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _exportText(PackTrip trip) {
     final lines = <String>[
-      '🎒 PACKTRAIL LIST: ${trip.name.toUpperCase()}',
+      '🎒 PACKING LIST APP: ${trip.name.toUpperCase()}',
       'Packed ${trip.items.where((i) => i.packed).length} / ${trip.items.length}',
       '----------------------------------------',
     ];
