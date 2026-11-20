@@ -25,7 +25,7 @@ A packing list app for creating and checking off trip checklists, and organized 
 
 ## How to Install and Run
 ### Android (APK)
-1. Download [app-release.apk](https://drive.google.com/file/d/1SIS2YVGo5uQ-xXoWfwR0XG0znwd4jfhE/view?usp=sharing)
+1. Download [app-release.apk](https://drive.google.com/file/d/1Ek0w92aBycz6RqJPkFOquqDyBdXVUTVG/view?usp=sharing)
 2. Send it to your Android phone and open the file.
 3. Tap **Install**. If you see "Blocked," allow installs from that app in the phone's Settings.
 
